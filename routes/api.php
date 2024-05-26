@@ -28,4 +28,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/weather/get-weather-data', [Weather::class, 'get_weather_data']);
 
     Route::post('/weather/show', [Weather::class, 'api_show']);
+
+    Route::post('/logout', [Login::class, 'api_logout']);
 });

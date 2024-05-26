@@ -31,7 +31,7 @@
                         $("#alert-message-success").fadeIn(200);
                         $("#form-login")[0].reset();
                         const redirect_url = response.data.redirect_url;
-                        window.location.href(redirect_url);
+                        window.location.href = redirect_url;
                     },
                     error: function(xhr, status, error) {
                         const responseJson = xhr.responseJSON;

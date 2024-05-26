@@ -36,4 +36,6 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/weather/get-weather-data', [Weather::class, 'get_weather_data'])->name('get-weather-data');
     Route::post('/weather/store', [Weather::class, 'store'])->name('store-weather');
+    Route::get('/weather', [Weather::class, 'index'])->name('weather');
+    Route::post('/weather/show', [Weather::class, 'show'])->name('show-weather');
 });

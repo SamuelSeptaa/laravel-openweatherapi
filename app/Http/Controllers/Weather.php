@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\weather as ModelsWeather;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class Weather extends Controller
 {
@@ -15,7 +16,8 @@ class Weather extends Controller
      */
     public function index()
     {
-        //
+        $this->data['script']       = "weather.script.index";
+        return $this->renderTo("weather.index");
     }
 
     public function get_weather_data(Request $request)
@@ -136,12 +138,31 @@ class Weather extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  Request $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        $query          = ModelsWeather::select("*");
+        return DataTables::of($query)
+            ->addColumn('latlong', function ($query) {
+                return '<a target="_blank"
+                href="https://www.google.com/maps/search/?api=1&query=' . $query->latitude . '%2C' . $query->longitude . '"><i
+                    class="fa-solid fa-up-right-from-square"></i> ' . $query->latitude . ', ' . $query->longitude . '</a>';
+            })
+            ->editColumn('updated_at', function ($query) {
+                return date('d M Y H:i:s', strtotime($query->created_at));
+            })
+            ->editColumn('courier_name', function ($query) {
+                return
+                    '<div class="text-center">
+                ' . $query->courier_name . ' <br>
+                <a href="tel:' . $query->courier_phone . '" target="_blank">' . $query->courier_phone . '</a>
+                </div>';
+            })
+            ->rawColumns(['latlong'])
+            ->removeColumn(['id'])
+            ->make(true);
     }
 
     /**

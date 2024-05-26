@@ -71,4 +71,13 @@ class Login extends Controller
         $request->session()->regenerateToken();
         return redirect('/');
     }
+
+    public function api_logout()
+    {
+        Auth::user()->tokens()->delete();
+        return response()->json([
+            'status'        => 'Success',
+            'message'       => 'Logout success'
+        ]);
+    }
 }
