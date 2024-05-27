@@ -38,4 +38,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/weather/store', [Weather::class, 'store'])->name('store-weather');
     Route::get('/weather', [Weather::class, 'index'])->name('weather');
     Route::post('/weather/show', [Weather::class, 'show'])->name('show-weather');
+    Route::delete('/weather/destroy', [Weather::class, 'destroy'])->name('destroy-weather');
 });

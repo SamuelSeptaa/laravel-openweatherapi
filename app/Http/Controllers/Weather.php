@@ -150,6 +150,13 @@ class Weather extends Controller
                 href="https://www.google.com/maps/search/?api=1&query=' . $query->latitude . '%2C' . $query->longitude . '"><i
                     class="fa-solid fa-up-right-from-square"></i> ' . $query->latitude . ', ' . $query->longitude . '</a>';
             })
+            ->addColumn('action', function ($query) {
+                return '
+                <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
+                    <button onclick="deleteWeather(' . $query->id . ')" class="btn btn-outline-danger">Delete</button>
+                </div>
+                ';
+            })
             ->editColumn('updated_at', function ($query) {
                 return date('d M Y H:i:s', strtotime($query->created_at));
             })
@@ -160,7 +167,7 @@ class Weather extends Controller
                 <a href="tel:' . $query->courier_phone . '" target="_blank">' . $query->courier_phone . '</a>
                 </div>';
             })
-            ->rawColumns(['latlong'])
+            ->rawColumns(['latlong', 'action'])
             ->removeColumn(['id'])
             ->make(true);
     }
@@ -177,15 +184,64 @@ class Weather extends Controller
         //
     }
 
+    public function destroy(Request $request)
+    {
+        $weather        = ModelsWeather::find($request->id);
+        if ($weather === null) {
+            return response()->json([
+                'status' => 'Failed',
+                'message'   => "No data found"
+            ], 404);
+        }
+        DB::beginTransaction();
+        try {
+
+            ModelsWeather::where('id', $request->id)->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'Success',
+                'message'   => "Successfully delete weather data"
+            ], 201);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'Failed',
+                'message'   => "Transaction failed: " . $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function api_destroy($id)
     {
-        //
+        $weather        = ModelsWeather::find($id);
+        if ($weather === null) {
+            return response()->json([
+                'status' => 'Failed',
+                'message'   => "No data found"
+            ], 404);
+        }
+        DB::beginTransaction();
+        try {
+
+            ModelsWeather::where('id', $id)->delete();
+            DB::commit();
+            return response()->json([
+                'status' => 'Success',
+                'message'   => "Successfully delete weather data"
+            ], 201);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'Failed',
+                'message'   => "Transaction failed: " . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function api_show()

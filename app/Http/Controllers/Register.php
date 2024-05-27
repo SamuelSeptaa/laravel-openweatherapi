@@ -21,7 +21,7 @@ class Register extends Controller
             'name'              => ['required', 'min:5', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'email'             => ['required', 'min:5', 'max:255', 'unique:users,email', 'email:dns'],
             'password'          => ['required', 'min:5', 'max:255'],
-            'password_confirm'  => ['same:password'],
+            'password_confirm'  => ['required', 'same:password'],
         ]);
 
         DB::beginTransaction();
