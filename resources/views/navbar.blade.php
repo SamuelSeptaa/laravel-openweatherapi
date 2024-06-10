@@ -16,7 +16,8 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/logout">Logout <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/logout">{{ auth()->user()->email }} <span
+                        class="sr-only">(current)</span></a>
             </li>
         </ul>
     </div>

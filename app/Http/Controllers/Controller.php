@@ -114,4 +114,25 @@ class Controller extends BaseController
             'message'   => "You do not have permission to access $permission_name"
         ], 403);
     }
+
+
+    protected function isAllSetAndReturn($request)
+    {
+        foreach ($request as $key => $value) {
+            if (trim($value) === "" || $value === null)
+                unset($request[$key]);
+        }
+        return $request;
+    }
+
+    protected function generateWhere($request_body, $string_compare = "=")
+    {
+        $request = $this->isAllSetAndReturn($request_body);
+
+        $array_where = [];
+        foreach ($request as $key => $value) {
+            array_push($array_where, [$key, $string_compare, $value]);
+        }
+        return $array_where;
+    }
 }

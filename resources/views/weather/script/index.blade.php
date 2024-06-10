@@ -126,7 +126,7 @@
         order: [
             [6, 'desc']
         ],
-        dom: "rtip",
+        dom: "frtip",
         createdRow: function(row, data, dataIndex) {
             $('td', row).css('vertical-align', 'middle');
         },

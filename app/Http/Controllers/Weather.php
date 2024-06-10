@@ -6,6 +6,7 @@ use App\Models\weather as ModelsWeather;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
 class Weather extends Controller
 {
@@ -38,8 +39,8 @@ class Weather extends Controller
             $error = curl_error($curl);
             return response()->json([
                 'status'        => 'Failed',
-                'message'       => $error
-            ], 404);
+                'message'       => $error,
+            ], 401);
         } else {
             $response = json_decode($response);
 
@@ -244,9 +245,17 @@ class Weather extends Controller
         }
     }
 
-    public function api_show()
+    public function api_show(Request $request)
     {
-        $weathers           = ModelsWeather::all();
+        $where      = [];
+        $request->validate([
+            'id'            => ['numeric'],
+            'location_name' => ['regex:/^[a-zA-Z\s]+$/']
+        ]);
+
+        $where = $this->generateWhere($request->all());
+        $orm                = ModelsWeather::where($where);
+        $weathers           = $orm->get();
         if ($weathers->isEmpty()) {
             return response()->json([
                 'status'            => 'Failed',
@@ -258,7 +267,7 @@ class Weather extends Controller
             'status'            => 'Success',
             'message'           => 'Weather data retrieved',
             'data'              => [
-                'weathers'      => ModelsWeather::all()
+                'weathers'      => $weathers,
             ]
         ]);
     }
